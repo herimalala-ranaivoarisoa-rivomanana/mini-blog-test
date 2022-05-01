@@ -35,7 +35,6 @@ Clone the repository
 
    ```bash
    npx prisma migrate dev --name init
-   npx prisma db seed
    ```
 
 3. Start in development mode:
