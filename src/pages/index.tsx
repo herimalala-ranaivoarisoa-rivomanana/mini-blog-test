@@ -7,13 +7,14 @@ import { Article } from '@/types/article';
 export const getStaticProps: GetStaticProps<{
   articles: Article[];
 }> = async () => {
-  const articles = await getAllArticles();
-
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  const url = `${protocol}://localhost:3000/api/articles`;
+  const articles = await getAllArticles(url);
   return {
     props: {
       articles,
     },
-    revalidate: 60, // ISR
+    revalidate: 60,
   };
 };
 

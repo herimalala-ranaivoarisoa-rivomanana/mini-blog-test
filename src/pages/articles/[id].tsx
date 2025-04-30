@@ -8,7 +8,9 @@ import { getAllArticles, getArticleById } from '@/lib/articles';
 import dayjs from 'dayjs';
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const articles = await getAllArticles();
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  const url = `${protocol}://localhost:3000/api/articles`;
+  const articles = await getAllArticles(url);
 
   return {
     paths: articles.map(article => ({
@@ -59,11 +61,11 @@ export default function ArticlePage({
         className="rounded-md mb-4"
       />
 
-      <p className="text-gray-500 text-sm mb-2">
+      <p className="text-gray-500 text-sm mb-2 text-white">
         Publié le {dayjs(article.createdAt).format('DD/MM/YYYY')}
       </p>
 
-      <p className="text-lg leading-relaxed">{article.content}</p>
+      <p className="text-lg leading-relaxed text-white">{article.content}</p>
     </article>
   );
 }

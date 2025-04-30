@@ -1,9 +1,7 @@
-// pages/api/login.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
-
-const prisma = new PrismaClient();
+import jwt from 'jsonwebtoken';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -11,11 +9,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { email, password } = req.body;
 
   const user = await prisma.user.findUnique({ where: { email } });
+  console.log("user", user)
   if (!user) return res.status(401).json({ message: 'Identifiants invalides' });
 
-  const valid = await bcrypt.compare(password, user.password);
-  if (!valid) return res.status(401).json({ message: 'Identifiants invalides' });
+  const isValid = await bcrypt.compare(password, user.password);
+  if (!isValid) return res.status(401).json({ message: 'Identifiants invalides' });
 
-  // À remplacer plus tard par un vrai JWT
-  return res.status(200).json({ token: 'fake-token', user: { id: user.id, email: user.email } });
+  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, { expiresIn: '1d' });
+  console.log("token",token)
+  res.status(200).json({ token });
 }

@@ -1,4 +1,5 @@
 import { Article } from '@/types/article'
+import axios, { AxiosResponse } from 'axios';
 
 export const articles: Article[] = [
   {
@@ -19,9 +20,11 @@ export const articles: Article[] = [
   },
 ]
 
-export function getAllArticles(): Promise<Article[]> {
-    return Promise.resolve(articles);
-  }
+export const getAllArticles = async (url:string): Promise<Article[]> => {
+  
+  const response:AxiosResponse = await axios.get<Article[]>(url);
+  return response.data;
+}
   
   export function getArticleById(id: string): Promise<Article | null> {
     const article = articles.find((a) => a.id === id);

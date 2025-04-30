@@ -1,86 +1,142 @@
-// pages/admin.tsx
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import axios from 'axios';
+import {Article} from "@/types/article"
 
 const AdminPage = () => {
   const router = useRouter();
-  const [form, setForm] = useState({
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [articles, setArticles] = useState([]);
+  const [newArticle, setNewArticle] = useState({
     title: '',
-    description: '',
     content: '',
+    description: '',
     image: '',
   });
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('auth-token');
+    
     if (!token) {
       router.push('/login');
+      return;
     }
+
+   setIsAuthenticated(true);
+    
+   const fetchArticles = async () => {
+      try {
+        const response = await axios.get('/api/articles');
+        setArticles(response.data);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (err) {
+        setError('Erreur de chargement des articles');
+      }
+    };
+
+    fetchArticles();
   }, [router]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleCreateArticle = async (e: React.FormEvent) => {
     e.preventDefault();
+    const token = localStorage.getItem('auth-token');
+    if (!token) return;
+
     try {
-      const res = await fetch('/api/articles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+      await axios.post('/api/articles', newArticle, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-
-      if (!res.ok) {
-        const { message } = await res.json();
-        alert(`Erreur : ${message}`);
-        return;
-      }
-
-      alert('Article créé avec succès');
-      setForm({ title: '', description: '', content: '', image: '' });
-    } catch (err) {
-      console.error(err);
-      alert('Erreur de réseau');
+      setNewArticle({ title: '', content: '',image:'', description: '' });
+      setError('');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err: unknown) {
+      setError('Erreur lors de la création de l\'article');
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto p-4">
-      <h1 className="text-xl font-bold mb-4">Créer un article</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="title"
-          value={form.title}
-          onChange={handleChange}
-          placeholder="Titre"
-          className="w-full border p-2"
-        />
-        <input
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          placeholder="Description courte"
-          className="w-full border p-2"
-        />
-        <textarea
-          name="content"
-          value={form.content}
-          onChange={handleChange}
-          placeholder="Contenu"
-          className="w-full border p-2"
-        />
-        <input
-          name="image"
-          value={form.image}
-          onChange={handleChange}
-          placeholder="URL de l’image"
-          className="w-full border p-2"
-        />
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-          Publier
-        </button>
-      </form>
+    <div className="min-h-screen bg-gray-100">
+      <div className="p-8">
+        <h1 className="text-3xl font-bold text-center mb-6">Page Admin</h1>
+
+        {!isAuthenticated && <p className="text-center text-red-600">Vous devez être connecté pour accéder à cette page.</p>}
+
+        {error && <p className="text-red-600">{error}</p>}
+
+        <form onSubmit={handleCreateArticle} className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold mb-4">Créer un nouvel article</h2>
+
+          <div className="mb-4">
+            <label className="block text-gray-700" htmlFor="title">Titre</label>
+            <input
+              type="text"
+              id="title"
+              className="w-full p-2 border border-gray-300 rounded"
+              value={newArticle.title}
+              onChange={(e) => setNewArticle({ ...newArticle, title: e.target.value })}
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700" htmlFor="title">ImageURL</label>
+            <input
+              type="text"
+              id="image"
+              className="w-full p-2 border border-gray-300 rounded"
+              value={newArticle.image}
+              onChange={(e) => setNewArticle({ ...newArticle, image: e.target.value })}
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700" htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              className="w-full p-2 border border-gray-300 rounded"
+              value={newArticle.description}
+              onChange={(e) => setNewArticle({ ...newArticle, description: e.target.value })}
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700" htmlFor="content">Contenu</label>
+            <textarea
+              id="content"
+              className="w-full p-2 border border-gray-300 rounded"
+              value={newArticle.content}
+              onChange={(e) => setNewArticle({ ...newArticle, content: e.target.value })}
+              required
+            />
+          </div>
+
+          <button type="submit" className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">
+            Ajouter l&apos;article
+          </button>
+        </form>
+
+        <div className="mt-6">
+          <h2 className="text-2xl font-semibold">Articles existants</h2>
+          <div className="mt-4">
+            {articles.length === 0 ? (
+              <p>Aucun article disponible.</p>
+            ) : (
+              <ul>
+                {articles.map((article: Article) => (
+                  <li key={article.id} className="mb-2">
+                    <h3 className="text-xl font-bold">{article.title}</h3>
+                    <p>{article.description}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
