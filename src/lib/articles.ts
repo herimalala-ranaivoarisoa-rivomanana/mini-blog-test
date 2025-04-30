@@ -1,22 +1,24 @@
 import { Article } from '@/types/article';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 
-const baseUrl = 'http://localhost:3000';
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
 export const getAllArticles = async (): Promise<Article[]> => {
-  const url = `${baseUrl}/api/articles`;
-  const response: AxiosResponse = await axios.get<Article[]>(url);
-  return response.data;
+  try {
+    const response = await axios.get(`${baseUrl}/api/articles`);
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des articles:', error);
+    return [];
+  }
 };
 
 export const getArticleById = async (id: string): Promise<Article | null> => {
-  const url = `${baseUrl}/api/articles/${id}`;
-
   try {
-    const response: AxiosResponse<Article> = await axios.get<Article>(url);
+    const response = await axios.get(`${baseUrl}/api/articles/${id}`);
     return response.data;
   } catch (error) {
-    console.error(`Erreur lors de la récupération de l'article avec l'ID ${id}:`, error);
+    console.error('Erreur lors de la récupération de l\'article:', error);
     return null;
   }
 };

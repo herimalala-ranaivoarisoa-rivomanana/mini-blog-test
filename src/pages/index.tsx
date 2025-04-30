@@ -13,15 +13,17 @@ export const getStaticProps: GetStaticProps<{
       props: {
         articles,
       },
-      revalidate: 60,
+      revalidate: 60, // Permet de régénérer la page après 60 secondes
     };
   } catch (error) {
     console.error('Erreur lors du chargement des articles :', error);
+
+    // Fallback : renvoyer des données par défaut (articles vides ou simulés)
     return {
       props: {
-        articles: [],
+        articles: [], // Ou tu pourrais mettre des articles simulés ici si tu en as
       },
-      revalidate: 60,
+      revalidate: 60, // Toujours garder la possibilité de régénérer la page
     };
   }
 };
@@ -38,7 +40,8 @@ export default function HomePage({
       <main role="main" className="container mx-auto py-10 px-4">
         <h1 className="text-4xl font-bold mb-8 text-left">Articles récents</h1>
         {articles.length === 0 ? (
-          <p className="text-orange-200">Aucun article disponible pour le moment.</p>
+          // Message d'erreur si aucun article n'est disponible
+          <p className="text-orange-200">Aucun article disponible pour le moment. Veuillez réessayer plus tard.</p>
         ) : (
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {articles.map((article) => (
