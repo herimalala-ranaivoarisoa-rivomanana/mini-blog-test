@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Article } from '@/types/article';
 import { getAllArticles, getArticleById } from '@/lib/articles';
 import dayjs from 'dayjs';
+import Head from 'next/head';
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
@@ -50,6 +51,11 @@ export default function ArticlePage({
   }
 
   return (
+    <>
+    <Head>
+      <title>Blog - Article - Details</title>
+      <meta name="description" content={`Test d'valuation `} />
+    </Head>
     <article className="max-w-3xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-4">{article.title}</h1>
 
@@ -67,5 +73,6 @@ export default function ArticlePage({
 
       <p className="text-lg leading-relaxed text-white">{article.content}</p>
     </article>
+    </>
   );
 }

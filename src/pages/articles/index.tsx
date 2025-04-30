@@ -24,7 +24,8 @@ export default function HomePage({
   return (
     <>
       <Head>
-        <title>Blog - Accueil</title>
+        <title>Blog - Articles</title>
+        <meta name="description" content={`Test d'valuation - Liste d'articles`} />
       </Head>
       <main className="container mx-auto py-10 px-4">
         <h1 className="text-4xl font-bold mb-8 text-left">Articles récents</h1>
