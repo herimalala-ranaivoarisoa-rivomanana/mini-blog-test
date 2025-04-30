@@ -7,15 +7,23 @@ import { Article } from '@/types/article';
 export const getStaticProps: GetStaticProps<{
   articles: Article[];
 }> = async () => {
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-  const url = `${protocol}://localhost:3000/api/articles`;
-  const articles = await getAllArticles(url);
-  return {
-    props: {
-      articles,
-    },
-    revalidate: 60,
-  };
+  try {
+    const articles = await getAllArticles();
+    return {
+      props: {
+        articles,
+      },
+      revalidate: 60,
+    };
+  } catch (error) {
+    console.error('Erreur lors du chargement des articles :', error);
+    return {
+      props: {
+        articles: [],
+      },
+      revalidate: 60,
+    };
+  }
 };
 
 export default function HomePage({
@@ -25,15 +33,19 @@ export default function HomePage({
     <>
       <Head>
         <title>Blog - Accueil</title>
-        <meta name="description" content={`Test d'valuation `} />
+        <meta name="description" content="Découvrez nos derniers articles de blog sur divers sujets." />
       </Head>
-      <main className="container mx-auto py-10 px-4">
+      <main role="main" className="container mx-auto py-10 px-4">
         <h1 className="text-4xl font-bold mb-8 text-left">Articles récents</h1>
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {articles.map((article) => (
-            <ArticleCard key={article.id} article={article} />
-          ))}
-        </div>
+        {articles.length === 0 ? (
+          <p className="text-orange-200">Aucun article disponible pour le moment.</p>
+        ) : (
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {articles.map((article) => (
+              <ArticleCard key={article.id} article={article} />
+            ))}
+          </div>
+        )}
       </main>
     </>
   );

@@ -1,32 +1,23 @@
-import { Article } from '@/types/article'
+import { Article } from '@/types/article';
 import axios, { AxiosResponse } from 'axios';
 
-export const articles: Article[] = [
-  {
-    id: '1',
-    title: 'Elon Wears Two Hats During Trump Meeting in Desperate Bid for Attention',
-    description: 'Meanwhile, Trump acknowledged that Christmas this year may not be so merry.',
-    image: 'https://gizmodo.com/app/uploads/2025/04/elon-musk-two-hats-double-april-30-2025.jpg',
-    content: 'Voici le contenu détaillé du premier article.',
-    createdAt: '2025-04-30T20:20:53Z',
-  },
-  {
-    id: '2',
-    title: 'Sheryl Crow Says an Armed Man Got On Her Property After She Ditched Her Tesla',
-    description: 'Sheryl Crow said an armed intruder got onto her property after she publicly sold her Tesla in protest of Elon Musk and Donald Trump.',
-    image: 'https://www.rollingstone.com/wp-content/uploads/2025/04/GettyImages-2198304896.jpg?w=1600&h=900&crop=1',
-    content: 'Sheryl Crow said she caught an armed man on her property in Tennessee after publicly ditching her Tesla in protest of Elon Musk and President Donald Trump’s efforts to gut governmentprograms through … [+1767 chars',
-    createdAt: '2025-04-30T20:26:25Z',
-  },
-]
+const baseUrl = 'http://localhost:3000';
 
-export const getAllArticles = async (url:string): Promise<Article[]> => {
-  
-  const response:AxiosResponse = await axios.get<Article[]>(url);
+export const getAllArticles = async (): Promise<Article[]> => {
+  const url = `${baseUrl}/api/articles`;
+  const response: AxiosResponse = await axios.get<Article[]>(url);
+  console.log("response",response)
   return response.data;
-}
-  
-  export function getArticleById(id: string): Promise<Article | null> {
-    const article = articles.find((a) => a.id === id);
-    return Promise.resolve(article || null);
+};
+
+export const getArticleById = async (id: string): Promise<Article | null> => {
+  const url = `${baseUrl}/api/articles/${id}`;
+
+  try {
+    const response: AxiosResponse<Article> = await axios.get<Article>(url);
+    return response.data;
+  } catch (error) {
+    console.error(`Erreur lors de la récupération de l'article avec l'ID ${id}:`, error);
+    return null;
   }
+};

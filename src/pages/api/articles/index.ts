@@ -26,11 +26,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ message: 'Erreur lors de la création de l’article.' });
     }
   } else if (req.method === 'GET') {
-    const articles = await prisma.article.findMany({
-      orderBy: { createdAt: 'desc' },
-    });
-    res.status(200).json(articles);
+    try {
+      const articles = await prisma.article.findMany({});
+      return res.status(200).json(articles);
+    } catch (error) {
+      console.error('Erreur dans GET /api/articles:', error);  // 🔍 log utile
+      return res.status(500).json({ message: 'Erreur serveur lors de la récupération des articles.' });
+    }
   } else {
     res.status(405).end();
   }
 }
+

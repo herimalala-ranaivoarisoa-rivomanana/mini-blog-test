@@ -1,5 +1,3 @@
-// pages/articles/[id].tsx
-
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
@@ -9,15 +7,13 @@ import dayjs from 'dayjs';
 import Head from 'next/head';
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-  const url = `${protocol}://localhost:3000/api/articles`;
-  const articles = await getAllArticles(url);
+  const articles = await getAllArticles();
 
   return {
     paths: articles.map(article => ({
       params: { id: article.id },
     })),
-    fallback: 'blocking', 
+    fallback: 'blocking',
   };
 };
 
@@ -47,7 +43,7 @@ export default function ArticlePage({
   }
 
   if (!article) {
-    return <p>Article introuvable.</p>; 
+    return <p>Article introuvable.</p>;
   }
 
   return (
