@@ -6,7 +6,6 @@ const baseUrl = 'http://localhost:3000';
 export const getAllArticles = async (): Promise<Article[]> => {
   const url = `${baseUrl}/api/articles`;
   const response: AxiosResponse = await axios.get<Article[]>(url);
-  console.log("response",response)
   return response.data;
 };
 

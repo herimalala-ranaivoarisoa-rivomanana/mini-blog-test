@@ -6,7 +6,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow">{children}</main>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 }

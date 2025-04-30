@@ -30,6 +30,7 @@ Clone the repository
    ```bash
    npm install
    ```
+
 2. Run database migrations and seed the database:
 
    ```bash
@@ -48,5 +49,3 @@ Les identifiants d'administration sont:
 
 - **Username:** <admin@example.com>
 - **Password:** 123456
-
-
