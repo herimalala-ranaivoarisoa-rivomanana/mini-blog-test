@@ -27,7 +27,7 @@ const LoginPage = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 space-y-4">
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 space-y-4 text-white">
       <input
         type="email"
         value={email}
