@@ -13,7 +13,6 @@ Ce projet est une application frontend construite avec **Next.js** et **TypeScri
 - ✅ Typage fort avec TypeScript (aucun `any`, interfaces, `InferGetStaticPropsType`)
 - ✅ Page 404 personnalisée si l’article n’existe pas
 - ✅ Gestion du fallback lors du chargement dynamique d’un article
-- ✅ Données simulées via un fichier JSON local
 
 ---
 
@@ -26,7 +25,7 @@ Ce projet est une application frontend construite avec **Next.js** et **TypeScri
 
 Clone the repository
 
-1. Install backend dependencies:
+1. Installation des dependences:
 
    ```bash
    npm install
